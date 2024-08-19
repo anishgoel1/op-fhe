@@ -23,7 +23,3 @@ This project also utilizes ideas from secure Multiparty Computation (MPC), a fie
 The simulation performs blockchain-related operations such as gas cost analysis, which was inspired by Ethereum’s original design, as detailed in the Ethereum Yellow Paper:
 
 - **Wood, G. (2014).** Ethereum: A Secure Decentralised Generalised Transaction Ledger. *Ethereum Yellow Paper*. Retrieved from https://ethereum.github.io/yellowpaper/paper.pdf
-
-## Summary
-
-The implementation in this project is built upon the foundational research of the aforementioned works. By leveraging advancements in FHE and MPC, this project simulates encrypted state transitions on blockchain data, ensuring privacy and security for the computations.
