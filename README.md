@@ -16,8 +16,8 @@ This project simulates the effects of Fully Homomorphic Encryption (FHE) on the 
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/your-username/Optimism-FHE-Simulation.git
-   cd Optimism-FHE-Simulation
+   git clone https://github.com/your-username/op-fhe.git
+   cd op-fhe
 2. **Install Dependencies:**
 
    ```bash

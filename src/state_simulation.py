@@ -3,6 +3,7 @@ import torch
 import numpy as np
 import time
 import tracemalloc
+from typing import List, Dict, Any, Optional, Tuple, Union
 from scipy.stats import skew, kurtosis
 
 from logger import Logger
@@ -10,7 +11,13 @@ from optimism_api import OptimismAPI
 from fhe_encryption import OptimismFHEEncryption
 
 class FHEStateSimulator:
-    def __init__(self, api_key):
+    def __init__(self, api_key: str):
+        """
+        Initialize the FHEStateSimulator with the given API key.
+
+        Args:
+            api_key (str): API key for accessing the Optimism API.
+        """
         crypten.init()
         self.logger = Logger()
         self.api = OptimismAPI(api_key)
@@ -23,7 +30,16 @@ class FHEStateSimulator:
         self.noise_addition_constant = 1.0   # Fixed noise increase per addition
         self.noise_multiplication_factor = 1.05  # Noise growth factor for multiplications
 
-    def simulate_state_with_real_data(self, num_blocks=20):
+    def simulate_state_with_real_data(self, num_blocks: int = 20) -> Optional[Dict[str, Any]]:
+        """
+        Simulate the state with real data using advanced FHE and MPC operations.
+
+        Args:
+            num_blocks (int): Number of recent blocks to simulate. Default is 20.
+
+        Returns:
+            Optional[Dict[str, Any]]: Simulation results including decrypted states, transaction stats, and performance metrics.
+        """
         self.logger.log("Simulating state with {} recent blocks using advanced FHE and MPC operations...".format(num_blocks))
 
         # Start tracking memory usage for FHE
@@ -43,20 +59,20 @@ class FHEStateSimulator:
 
         total_gas_cost = 0
         transaction_count = 0
-        block_sizes = []
-        block_times = []
-        gas_prices = []  # To analyze gas price volatility
-        transaction_values = []
+        block_sizes: List[int] = []
+        block_times: List[int] = []
+        gas_prices: List[int] = []  # To analyze gas price volatility
+        transaction_values: List[float] = []
 
-        encryption_times = []
-        decryption_times = []
-        state_transition_times = []
-        multiplication_times = []  # Track multiplication operations
-        aggregation_times = []     # Track aggregation times
+        encryption_times: List[float] = []
+        decryption_times: List[float] = []
+        state_transition_times: List[float] = []
+        multiplication_times: List[float] = []  # Track multiplication operations
+        aggregation_times: List[float] = []     # Track aggregation times
 
-        noise_levels_party1 = []   # Track noise levels for party 1
-        noise_levels_party2 = []   # Track noise levels for party 2
-        noise_levels_party3 = []   # Track noise levels for party 3
+        noise_levels_party1: List[float] = []   # Track noise levels for party 1
+        noise_levels_party2: List[float] = []   # Track noise levels for party 2
+        noise_levels_party3: List[float] = []   # Track noise levels for party 3
 
         # Initial noise levels
         noise_party1 = 0.01
@@ -213,7 +229,16 @@ class FHEStateSimulator:
             }
         }
 
-    def fetch_recent_blocks(self, num_blocks):
+    def fetch_recent_blocks(self, num_blocks: int) -> Optional[List[Dict[str, Any]]]:
+        """
+        Fetch the most recent blocks from the blockchain.
+
+        Args:
+            num_blocks (int): Number of recent blocks to fetch.
+
+        Returns:
+            Optional[List[Dict[str, Any]]]: List of block data dictionaries or None if no blocks are fetched.
+        """
         latest_block_response = self.api.get_block_by_number('latest')
         if latest_block_response and 'result' in latest_block_response:
             latest_block = int(latest_block_response['result'], 16)
@@ -227,7 +252,17 @@ class FHEStateSimulator:
             return blocks if blocks else None
         return None
 
-    def fetch_block_with_retries(self, block_number, delay=2):
+    def fetch_block_with_retries(self, block_number: int, delay: int = 2) -> Tuple[Optional[Dict[str, Any]], int]:
+        """
+        Fetch a block with retries in case of failure.
+
+        Args:
+            block_number (int): Block number to fetch.
+            delay (int): Delay between retries in seconds. Default is 2.
+
+        Returns:
+            Tuple[Optional[Dict[str, Any]], int]: Block data dictionary and number of retries.
+        """
         retries = 0
         block_data = None
         while retries < self.max_retries:
@@ -240,14 +275,29 @@ class FHEStateSimulator:
 
         return block_data, retries
 
-    def decrypt_state(self, encrypted_state):
-        # Decrypt the final state
+    def decrypt_state(self, encrypted_state: Any) -> float:
+        """
+        Decrypt the final state.
+
+        Args:
+            encrypted_state (Any): Encrypted state to decrypt.
+
+        Returns:
+            float: Decrypted state value.
+        """
         self.logger.log("Decrypting final state...")
         decrypted_state = encrypted_state.get_plain_text()
         return decrypted_state.item()
 
-    def analyze_noise_growth(self, noise_levels_party1, noise_levels_party2, noise_levels_party3):
-        # Analyze how noise accumulates in the encrypted states for each party
+    def analyze_noise_growth(self, noise_levels_party1: List[float], noise_levels_party2: List[float], noise_levels_party3: List[float]) -> None:
+        """
+        Analyze how noise accumulates in the encrypted states for each party.
+
+        Args:
+            noise_levels_party1 (List[float]): Noise levels for party 1.
+            noise_levels_party2 (List[float]): Noise levels for party 2.
+            noise_levels_party3 (List[float]): Noise levels for party 3.
+        """
         avg_noise_party1 = np.mean(noise_levels_party1)
         avg_noise_party2 = np.mean(noise_levels_party2)
         avg_noise_party3 = np.mean(noise_levels_party3)
@@ -256,9 +306,15 @@ class FHEStateSimulator:
         self.logger.log("Noise Growth Analysis (Party 2) - Avg Noise Level: {:.6f}, Max Noise: {:.6f}, Min Noise: {:.6f}".format(avg_noise_party2, np.max(noise_levels_party2), np.min(noise_levels_party2)))
         self.logger.log("Noise Growth Analysis (Party 3) - Avg Noise Level: {:.6f}, Max Noise: {:.6f}, Min Noise: {:.6f}".format(avg_noise_party3, np.max(noise_levels_party3), np.min(noise_levels_party3)))
 
-    def analyze_transactions(self, transaction_values):
+    def analyze_transactions(self, transaction_values: List[float]) -> Dict[str, Union[float, int]]:
         """
         Perform advanced statistical analysis on the transaction values.
+
+        Args:
+            transaction_values (List[float]): List of transaction values.
+
+        Returns:
+            Dict[str, Union[float, int]]: Statistical analysis results including mean, variance, min, max, median, skewness, and kurtosis.
         """
         if not transaction_values:
             return {"mean": 0, "variance": 0, "min": 0, "max": 0, "median": 0, "skewness": 0, "kurtosis": 0}
@@ -283,9 +339,17 @@ class FHEStateSimulator:
             "kurtosis": kurtosis_val
         }
 
-    def analyze_block_data(self, block_sizes, block_times, gas_prices):
+    def analyze_block_data(self, block_sizes: List[int], block_times: List[int], gas_prices: List[int]) -> Dict[str, Union[float, List[int]]]:
         """
         Perform advanced statistical analysis on block sizes, block times, and gas prices.
+
+        Args:
+            block_sizes (List[int]): List of block sizes.
+            block_times (List[int]): List of block times.
+            gas_prices (List[int]): List of gas prices.
+
+        Returns:
+            Dict[str, Union[float, List[int]]]: Statistical analysis results including average block size, average block time, average gas price, and gas price volatility.
         """
         if not block_sizes or not block_times or not gas_prices:
             self.logger.log("Insufficient data for block analysis.")

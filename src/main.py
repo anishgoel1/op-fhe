@@ -3,33 +3,38 @@ from fhe_encryption import OptimismFHEEncryption
 from state_simulation import FHEStateSimulator
 from gas_cost_analysis import GasCostAnalysis
 from logger import Logger
+from typing import Any, Dict, Optional
 
-def main():
+def main() -> None:
+    """
+    Main function to load configuration, initialize components, simulate state transitions,
+    and log the results including gas cost analysis and FHE performance metrics.
+    """
     logger = Logger()
 
     # Load configuration
     config_loader = ConfigLoader()
-    config = config_loader.load_config("config.json")
-    api_key = config.get("api_key")
+    config: Dict[str, Any] = config_loader.load_config("config.json")
+    api_key: str = config.get("api_key")
     
     # Initialize components
     state_simulator = FHEStateSimulator(api_key)
     gas_analyzer = GasCostAnalysis()
 
     # Simulate state transitions with real Optimism data using advanced FHE and MPC operations
-    simulation_results = state_simulator.simulate_state_with_real_data(num_blocks=20)
+    simulation_results: Optional[Dict[str, Any]] = state_simulator.simulate_state_with_real_data(num_blocks=20)
 
     if simulation_results is not None:
         # Unpack the simulation results
-        decrypted_final_state_party1 = simulation_results["decrypted_final_state_party1"]
-        decrypted_final_state_party2 = simulation_results["decrypted_final_state_party2"]
-        decrypted_final_state_party3 = simulation_results["decrypted_final_state_party3"]
-        decrypted_final_aggregate_state = simulation_results["decrypted_final_aggregate_state"]
-        total_gas_cost = simulation_results["total_gas_cost"]
-        transaction_count = simulation_results["transaction_count"]
-        transaction_stats = simulation_results["transaction_stats"]
-        block_analysis = simulation_results["block_analysis"]
-        fhe_performance = simulation_results["fhe_performance"]
+        decrypted_final_state_party1: Any = simulation_results["decrypted_final_state_party1"]
+        decrypted_final_state_party2: Any = simulation_results["decrypted_final_state_party2"]
+        decrypted_final_state_party3: Any = simulation_results["decrypted_final_state_party3"]
+        decrypted_final_aggregate_state: Any = simulation_results["decrypted_final_aggregate_state"]
+        total_gas_cost: float = simulation_results["total_gas_cost"]
+        transaction_count: int = simulation_results["transaction_count"]
+        transaction_stats: Any = simulation_results["transaction_stats"]
+        block_analysis: Any = simulation_results["block_analysis"]
+        fhe_performance: Dict[str, Any] = simulation_results["fhe_performance"]
 
         # Log decrypted final states for each party and aggregate state
         logger.log("Final decrypted state (Party 1): {}".format(decrypted_final_state_party1))
@@ -39,7 +44,7 @@ def main():
         logger.log("Total transactions: {}, Total Gas Cost: {}".format(transaction_count, total_gas_cost))
 
         # Analyze gas costs
-        gas_analysis = gas_analyzer.analyze_gas_costs([1, 2, 3, 4, 5], total_gas_cost)
+        gas_analysis: Any = gas_analyzer.analyze_gas_costs([1, 2, 3, 4, 5], total_gas_cost)
         logger.log("Gas cost analysis: {}".format(gas_analysis))
 
         # Log transaction statistics
@@ -56,9 +61,9 @@ def main():
 
         # Check for noise levels before logging
         if "noise_levels_party1" in simulation_results and "noise_levels_party2" in simulation_results and "noise_levels_party3" in simulation_results:
-            noise_levels_party1 = simulation_results["noise_levels_party1"]
-            noise_levels_party2 = simulation_results["noise_levels_party2"]
-            noise_levels_party3 = simulation_results["noise_levels_party3"]
+            noise_levels_party1: Optional[list[float]] = simulation_results["noise_levels_party1"]
+            noise_levels_party2: Optional[list[float]] = simulation_results["noise_levels_party2"]
+            noise_levels_party3: Optional[list[float]] = simulation_results["noise_levels_party3"]
 
             if noise_levels_party1 and noise_levels_party2 and noise_levels_party3:
                 # Perform Noise Growth Analysis
