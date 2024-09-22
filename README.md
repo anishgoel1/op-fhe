@@ -1,15 +1,11 @@
-# Optimism FHE Simulation
-
-## Overview
-
-This project simulates the effects of Fully Homomorphic Encryption (FHE) on the Optimism blockchain. The simulation processes real blockchain data, performing encrypted state transitions and analyzing noise growth, gas costs, and other performance metrics related to FHE.
+# Optimism Encryption/Decryption Simulation
 
 ## Features
 
-- **State Transition Simulation**: Simulates blockchain state transitions using FHE for different parties.
+- **State Transition Simulation**: Simulates blockchain state transitions for different parties.
 - **Noise Growth Analysis**: Tracks and analyzes the growth of noise in encrypted states.
 - **Gas Cost Analysis**: Computes and analyzes gas costs of blockchain transactions.
-- **Performance Benchmarking**: Logs FHE performance metrics such as encryption, decryption, state transition, and memory usage.
+- **Performance Benchmarking**: Logs performance metrics such as encryption, decryption, state transition, and memory usage.
 
 ## Installation
 
